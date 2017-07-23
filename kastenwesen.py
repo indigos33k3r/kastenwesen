@@ -1230,12 +1230,13 @@ def main():
             out_format='json' if arguments['--cron'] else 'ascii',
         )
     elif arguments["start"]:
-        restart_many(container for container in given_containers
-                     if not (container.is_running() or container.only_build))
+        restart_many([container for container in given_containers
+                     if not (container.is_running() or container.only_build)],
+                     ignore_dependencies=bool(arguments["--ignore-dependencies"]))
         time.sleep(DEFAULT_STARTUP_GRACETIME)
         print_status_and_exit(given_containers)
     elif arguments["stop"]:
-        stop_many(given_containers)
+        stop_many(given_containers, ignore_dependencies=bool(arguments["--ignore-dependencies"]))
     elif arguments["shell"]:
         try:
             given_containers[0].interactive_shell(arguments["--new-instance"])
